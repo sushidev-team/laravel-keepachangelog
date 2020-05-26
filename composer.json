@@ -1,0 +1,40 @@
+{
+    "name": "ambersive/keepachangelog",
+    "description": "Use https://keepachangelog.com/en/1.0.0/ in your laravel project.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Manuel.PirkerIhl",
+            "email": "manuel.pirker-ihl@ambersive.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "illuminate/support": "6.*|7.*|8.*",
+        "graham-campbell/markdown": "11.*|12.*"
+    },
+    "require-dev": {
+        "php" : ">=7.4",
+        "illuminate/support": "5.2.*|5.3.*|5.4.*|5.5.*|5.6.*|5.7.*|5.8.*|6.*|7.*",
+        "laravel/framework": "5.2.*|5.3.*|5.4.*|5.5.*|5.6.*|5.7.*|5.8.*|6.*|7.*|8.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "AMBERSIVE\\KeepAChangelog\\": "src/"
+        }
+    },
+    "extra": {
+        "component": "package",
+        "laravel": {
+            "providers": [
+                "AMBERSIVE\\KeepAChangelog\\ChangelogServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "test": [
+            "@composer install",
+            "vendor/bin/phpunit"
+        ]
+    }
+}
