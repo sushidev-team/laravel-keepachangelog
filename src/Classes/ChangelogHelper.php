@@ -47,7 +47,7 @@ class ChangelogHelper {
         $path = self::path($repository, true);
 
         if (File::exists($path) === false || File::get($path) === "") {
-            $content = self::template();
+            $content = str_replace('{{CHANGELOG-LINES}}', '', self::template());
             File::put($path,  $content);
         }
 
@@ -138,7 +138,7 @@ class ChangelogHelper {
         $content = implode('', $lines);
         $template = self::template();
 
-        $template = str_replace("{{CHANGLOG-LINES}}", $content, $template);
+        $template = str_replace("{{CHANGELOG-LINES}}", $content, $template);
 
 
         // Save the markdown file

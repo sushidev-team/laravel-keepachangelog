@@ -10,8 +10,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "illuminate/support": "6.*|7.*|8.*",
-        "graham-campbell/markdown": "11.*|12.*"
+        "illuminate/support": "6.*|7.*|8.*"
     },
     "require-dev": {
         "php" : ">=7.4",
