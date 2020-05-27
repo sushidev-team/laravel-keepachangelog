@@ -139,4 +139,113 @@ class ChangelogHelperTest extends TestCase
 
     }
 
+    /**
+     * This test will test if the parseing will even return an valid result if the repository 
+     * does not exist.
+     */
+    public function testIfChangelogHelperParseWillReturnEmptyArrayIfRepositoryDoesNotExist():void {
+
+        $resultRead = ChangelogHelper::parse('XXX');
+
+        $this->assertNotNull($resultRead);
+        $this->assertEquals([
+            '## [Unreleased]' => []
+        ], $resultRead);
+
+    }
+
+    /**
+     * Test if the changelog release method will move the complete block into a seperat block with the
+     * version number + release date
+     */
+    public function testIfChangelogHelperReleaseWillMoveTheEntireContentToASeperatReleasedSectoin(): void {
+
+        $resultWrite    = ChangelogHelper::addLine('default', 'added', 'XXX - XXX');
+        $resultReadInit = ChangelogHelper::parse('default');
+        $date           = \Carbon\Carbon::now()->format('Y-m-d');
+
+        $result = ChangelogHelper::release('default');
+        $resultReadAfter = ChangelogHelper::parse('default');
+
+        $this->assertTrue($result);
+        $this->assertEmpty($resultReadAfter['## [Unreleased]']);
+        $this->assertEquals($resultReadInit['## [Unreleased]'], $resultReadAfter["## [0.0.0] - ${date}"]);
+
+    }
+
+    /**
+     * Test if the file will return false if repository does not exists.
+     */
+    public function testIfChangelogHelperReleaseWillReturnFalseIfRepositoryDoesNotExist():void {
+
+        $resultReadInit = ChangelogHelper::parse('XXX');
+        $date           = \Carbon\Carbon::now()->format('Y-m-d');
+
+        $result = ChangelogHelper::release('XXX');
+
+        $this->assertFalse($result);
+
+    }
+
+    /**
+     * Test if the release method will keep the correct sorting of the changelog
+     * entries (desc)
+     */
+    public function testIfChangelogHelperReleaseWillKeepTheCorrectSorting():void {
+
+        $date           = \Carbon\Carbon::now()->format('Y-m-d');
+
+        $resultWrite1    = ChangelogHelper::addLine('default', 'added', 'XXX - XXX');
+        $resultRelease1  = ChangelogHelper::release('default');
+
+        $resultWrite2    = ChangelogHelper::addLine('default', 'added', 'XXX - XXX');
+        $resultRelease2  = ChangelogHelper::release('default', 1);
+
+        $resultRead = ChangelogHelper::parse('default');
+        $keys = array_keys($resultRead);
+
+        $this->assertTrue($resultWrite1);
+        $this->assertTrue($resultRelease1);
+
+        $this->assertTrue($resultWrite2);
+        $this->assertTrue($resultRelease2);
+        
+        $this->assertEquals($keys[0], "## [Unreleased]");
+        $this->assertEquals($keys[1], "## [1.0.0] - ${date}");
+        $this->assertEquals($keys[2], "## [0.0.0] - ${date}");
+
+    }
+
+    /**
+     * Test if the release block will be merged into the release block if there is already a 
+     * release with the same semver and date
+     */
+    public function testIfChangelogHelperReleaseWillNotOverwriteTheReleaseBlock():void {
+
+        $date           = \Carbon\Carbon::now()->format('Y-m-d');
+
+        $resultWrite1    = ChangelogHelper::addLine('default', 'added', 'XXX - XXX');
+        $resultRelease1  = ChangelogHelper::release('default', 1);
+
+        $resultWrite2    = ChangelogHelper::addLine('default', 'added', 'XXX - XXX');
+        $resultRelease2  = ChangelogHelper::release('default', 1);
+
+        $resultRead = ChangelogHelper::parse('default');
+        $keys = array_keys($resultRead);
+
+        $this->assertTrue($resultWrite1);
+        $this->assertTrue($resultRelease1);
+
+        $this->assertTrue($resultWrite2);
+        $this->assertTrue($resultRelease2);
+
+
+        $this->assertEquals(2, sizeof($keys));
+        $this->assertEquals($keys[0], "## [Unreleased]");
+        $this->assertEquals($keys[1], "## [1.0.0] - ${date}");
+
+        $this->assertEquals(1, sizeOf($resultRead["## [1.0.0] - ${date}"]));
+
+    }
+
 }

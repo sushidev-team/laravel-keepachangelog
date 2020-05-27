@@ -10,9 +10,17 @@ return [
     */
 
     // Types of changelog entry
-    'types' => [],
+    'types' => [
+        'added', 
+        'changed', 
+        'deprecated', 
+        'removed', 
+        'fixed', 
+        'security'
+    ],
 
-    // Repositories
+    // Define repositories to allow the command line tool to create changelog files
+    // in other directories
     'repositories' => [
 
         'default' =>  [

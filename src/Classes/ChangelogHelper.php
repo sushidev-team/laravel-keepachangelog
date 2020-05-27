@@ -5,6 +5,8 @@ namespace AMBERSIVE\KeepAChangelog\Classes;
 use File;
 use Str;
 
+use Carbon\Carbon;
+
 class ChangelogHelper {
 
     public static $identifierUnreleased = '## [Unreleased]';
@@ -249,6 +251,51 @@ class ChangelogHelper {
         }
 
         return $content;
+
+    }
+    
+    /**
+     * Release the unreleased parts of a changelog.md file
+     *
+     * @param  mixed $repository
+     * @param  mixed $major
+     * @param  mixed $minor
+     * @param  mixed $patch
+     * @return bool
+     */
+    public static function release(String $repository, Int $major = 0, Int $minor = 0, Int $patch = 0): bool {
+
+        $success = false;
+
+        $content = self::parse($repository);
+        $date = Carbon::now()->format('Y-m-d');
+
+        if (isset($content["## [${major}.${minor}.${patch}] - ${date}"]) == false) {
+            $content["## [${major}.${minor}.${patch}] - ${date}"] = $content['## [Unreleased]'];
+            $content['## [Unreleased]'] = [];
+        }
+        else {
+            $content["## [${major}.${minor}.${patch}] - ${date}"] = array_merge($content["## [${major}.${minor}.${patch}] - ${date}"], $content['## [Unreleased]']);
+            $content['## [Unreleased]'] = [];
+        }
+
+        if (File::exists(self::path($repository)) == false) {
+            return $success;
+        }
+
+        uksort($content, function($a, $b){
+            if ($a === '## [Unreleased]') {
+                return -1;
+            }
+            else if ($b === '## [Unreleased]') {
+                return -1;
+            }
+            return strcasecmp($b, $a);
+        });
+
+        $success = self::toMarkdown($repository, $content);
+
+        return $success;
 
     }
 
