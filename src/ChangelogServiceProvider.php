@@ -39,6 +39,10 @@ class ChangelogServiceProvider extends ServiceProvider
             __DIR__.'/Configs/keepachangelog.php'         => config_path('keepachangelog.php'),
         ],'keepachangelog');
 
+        $this->mergeConfigFrom(
+            __DIR__.'/Configs/keepachangelog.php', 'keepachangelog.php'
+        );
+
     }
 
 }

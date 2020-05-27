@@ -122,4 +122,21 @@ class ChangelogHelperTest extends TestCase
 
     }
 
+    /**
+     * Test if the method will return an array of the parsed changelog file
+     */
+    public function testIfChangelogHelperParseWillReturnArrayWithTheContent():void {
+
+        $resultWrite = ChangelogHelper::addLine('default', 'added', 'XXX - XXX');
+        $resultRead = ChangelogHelper::parse('default');
+
+        $this->assertNotNull($resultRead);
+
+        $msg = data_get($resultRead['## [Unreleased]'], 'Added', null);
+
+        $this->assertNotNull($msg);
+        $this->assertTrue(in_array('XXX - XXX', $msg));
+
+    }
+
 }
