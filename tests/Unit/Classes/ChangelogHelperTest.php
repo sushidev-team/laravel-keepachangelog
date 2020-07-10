@@ -2,7 +2,7 @@
 
 namespace AMBERSIVE\KeepAChangelog\Tests\Unit\Classes;
 
-use Tests\TestCase;
+use AMBERSIVE\Tests\TestCase;
 
 use Config;
 use File;
